@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head><title>Topup K-Vision</title></head>
+<body>
+  <h2>Form Topup K-Vision Manual</h2>
+  <form id="formTopup" enctype="multipart/form-data">
+    <input type="text" name="nama" placeholder="Nama Lengkap" required><br>
+    <input type="text" name="idpel" placeholder="ID Pelanggan K-Vision" required><br>
+    <select name="paket">
+      <option value="BROMO-01">BROMO-01 - Rp22.000</option>
+      <option value="CARTENZ-01">CARTENZ-01 - Rp25.000</option>
+    </select><br>
+    <input type="file" name="bukti" required><br>
+    <textarea name="pesan" placeholder="Tulis pesan untuk admin..." rows="4"></textarea><br>
+    <button type="submit">Kirim Pesanan</button>
+  </form>
+  <script>
+    const ADMIN_PHONE = "6281234567890"; // Ganti ke nomor admin kamu
+
+    const form = document.getElementById("formTopup");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+
+      // Kirim ke backend
+      await fetch('/api/kvision/order', {
+        method: 'POST',
+        body: data
+      });
+
+      // Buat pesan WA
+      const nama = data.get("nama");
+      const idpel = data.get("idpel");
+      const paket = data.get("paket");
+      const pesan = data.get("pesan");
+
+      const waMessage = `
+🟢 Pesanan Topup K-Vision
+
+Nama: ${nama}
+ID Pelanggan: ${idpel}
+Paket: ${paket}
+Pesan: ${pesan || '-'}
+      `.trim();
+
+      const encoded = encodeURIComponent(waMessage);
+      window.open(`https://wa.me/${ADMIN_PHONE}?text=${encoded}`, "_blank");
+      alert("Pesanan berhasil dikirim. Silakan kirim pesan via WhatsApp.");
+    });
+  </script>
+</body>
+</html>
